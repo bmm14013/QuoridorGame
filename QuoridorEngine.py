@@ -354,11 +354,16 @@ class QuoridorGame:
         fences left, or if the fence is out of bounds, or if there is already a fence there, returns False. 
         If the fence can be placed, returns True and places the fence. If the game has already been won, returns False.
         """
-        
+
         #Check if game has already been won
         if self.is_winner(1) or self.is_winner(2):
             return False
-        
+
+        #Check that cords are valid
+        validcords = set(range(9))
+        if cords[0] not in validcords or cords[1] not in validcords:
+            return False
+
         #Check if player one can place fence (Is currently their turn and has remaining fences)
         if player == 1 and self.get_player_turn() == 1 and self._p1.get_remaining_fences() != 0:
             #Check that cell has no fence of desired type
