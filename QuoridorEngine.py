@@ -98,6 +98,25 @@ class QuoridorGame:
         self._board[p1_location[1]][p1_location[0]]['pawn'] = True
         self._board[p2_location[1]][p2_location[0]]['pawn'] = True
 
+    
+    def get_board(self):
+        """
+        Returns the board list representation
+        """
+        return self._board
+
+    def get_p1_location(self):
+        """
+        Returns coordinates of player 1 location
+        """
+        return self._p1.get_location()
+
+    def get_p2_location(self):
+        """
+        Returns coordinates of player 2 location
+        """
+        return self._p2.get_location()
+
     def get_player_turn(self):
         """
         Returns the integer representing the player whose turn it is. 
