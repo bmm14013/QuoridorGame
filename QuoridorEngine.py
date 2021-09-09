@@ -386,9 +386,9 @@ class QuoridorGame:
         #Check if player one can place fence (Is currently their turn and has remaining fences)
         if player == 1 and self.get_player_turn() == 1 and self._p1.get_remaining_fences() != 0:
             #Check that cell has no fence of desired type
-            if not self._board[cords[1]][cords[0]][fence_type]:
+            if self._board[cords[1]][cords[0]][fence_type] is False:
                 #Place fence
-                self._board[cords[1]][cords[0]][fence_type] = True
+                self._board[cords[1]][cords[0]][fence_type] = 1
                 #Update player turn and fences available
                 self._p1.decrement_fences()
                 self.set_player_turn(2)
@@ -397,9 +397,9 @@ class QuoridorGame:
         #Check if player two can place fence
         if player == 2 and self.get_player_turn() == 2 and self._p2.get_remaining_fences() != 0:
             #Check that cell has no fence of desired type
-            if not self._board[cords[1]][cords[0]][fence_type]:
+            if self._board[cords[1]][cords[0]][fence_type] is False:
                 #Place fence
-                self._board[cords[1]][cords[0]][fence_type] = True
+                self._board[cords[1]][cords[0]][fence_type] = 2
                 #Update player turn and fences available
                 self._p2.decrement_fences()
                 self.set_player_turn(1)
