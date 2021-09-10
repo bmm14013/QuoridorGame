@@ -16,8 +16,11 @@ WHITE = (255,255,255)
 BLACK = (0,0,0)
 RED = (205,78,56)
 LIGHTRED = (255,127,127)
+LIGHTERRED = (247,198,197)
 BLUE = (50,147,198)
-LIGHTBLUE = (183,225,240)
+LIGHTBLUE = (137,214,238)
+LIGHTERBLUE = (197,226,238)
+LIGHTGREEN = (139,231,139)
 GRAY = (241,241,241)
 
 #Window refresh rate
@@ -26,6 +29,7 @@ FPS = 60
 #Initialize game and window
 WIN = pygame.display.set_mode((BOARDSIZE,BOARDSIZE))
 pygame.display.set_caption("Quoridor")
+
 
 def draw_board(win, board):
     """
@@ -38,20 +42,20 @@ def draw_board(win, board):
     for row in board:
         for col in row:
             #Current grid position
-            cords = col['cord']
+            coords = col['coord']
 
-            #Cords
-            h_fence_cords = (cords[0]*(SQUARESIZE+FENCEWIDTH), cords[1]*SQUARESIZE+FENCEWIDTH*(cords[1]-1))
-            v_fence_cords = (cords[0]*SQUARESIZE+FENCEWIDTH*(cords[0]-1), cords[1]*(SQUARESIZE+FENCEWIDTH))
-            board_spotcords = (cords[0]*(SQUARESIZE+FENCEWIDTH), cords[1]*(SQUARESIZE+FENCEWIDTH))
+            #coords
+            h_fence_coords = (coords[0]*(SQUARESIZE+FENCEWIDTH), coords[1]*SQUARESIZE+FENCEWIDTH*(coords[1]-1))
+            v_fence_coords = (coords[0]*SQUARESIZE+FENCEWIDTH*(coords[0]-1), coords[1]*(SQUARESIZE+FENCEWIDTH))
+            board_spotcoords = (coords[0]*(SQUARESIZE+FENCEWIDTH), coords[1]*(SQUARESIZE+FENCEWIDTH))
             
             #Rect objects
-            h_fence = pygame.Rect(h_fence_cords, (SQUARESIZE,FENCEWIDTH))
-            v_fence = pygame.Rect(v_fence_cords, (FENCEWIDTH,SQUARESIZE))
-            board_spot = pygame.Rect(board_spotcords, (SQUARESIZE,SQUARESIZE))
+            h_fence = pygame.Rect(h_fence_coords, (SQUARESIZE,FENCEWIDTH))
+            v_fence = pygame.Rect(v_fence_coords, (FENCEWIDTH,SQUARESIZE))
+            board_spot = pygame.Rect(board_spotcoords, (SQUARESIZE,SQUARESIZE))
             
             #Draw horizontal fence           
-            if cords[1] != 0 and cords[1] != 9 and cords[0] != 9:
+            if coords[1] != 0 and coords[1] != 9 and coords[0] != 9:
                 if col['h'] == 1:
                     pygame.draw.rect(win, RED, h_fence)
                 elif col['h'] == 2:
@@ -60,7 +64,7 @@ def draw_board(win, board):
                     pygame.draw.rect(win, WHITE, h_fence)
             
             #Draw vertical fence
-            if cords[0] != 0 and cords[0] != 9 and cords[1] != 9:
+            if coords[0] != 0 and coords[0] != 9 and coords[1] != 9:
                 if col['v'] == 1:
                     pygame.draw.rect(win, RED, v_fence)
                 elif col['v'] == 2:
@@ -69,30 +73,32 @@ def draw_board(win, board):
                     pygame.draw.rect(win, WHITE, v_fence)
             
             #Draw grid square
-            if cords[1] != 9 and cords[0] != 9:
-                if cords[1] == 0:
+            if coords[1] != 9 and coords[0] != 9:
+                if coords[1] == 0:
                     pygame.draw.rect(win, LIGHTRED, board_spot)
-                elif cords[1] == 8:
+                elif coords[1] == 8:
                     pygame.draw.rect(win, LIGHTBLUE, board_spot)
                 else:
                     pygame.draw.rect(win, GRAY, board_spot)
+
 
 def draw_players(win, p1_location, p2_location):
     """
     Draws players on board. Takes an input the surface to draw on and the board list representation from
     QuoridorEngine. SQUARESIZE, FENCEWIDTH, RED, BLUE are all global constants. 
     """
-    #Get P1 cords
-    p1_cords = (p1_location[0]*(SQUARESIZE+FENCEWIDTH), p1_location[1]*(SQUARESIZE+FENCEWIDTH))
-    p1_center_cords = (p1_cords[0]+SQUARESIZE/2, p1_cords[1]+SQUARESIZE/2)
+    #Get P1 coords
+    p1_coords = (p1_location[0]*(SQUARESIZE+FENCEWIDTH), p1_location[1]*(SQUARESIZE+FENCEWIDTH))
+    p1_center_coords = (p1_coords[0]+SQUARESIZE/2, p1_coords[1]+SQUARESIZE/2)
     
-    #Get P2 cords
-    p2_cords = (p2_location[0]*(SQUARESIZE+FENCEWIDTH), p2_location[1]*(SQUARESIZE+FENCEWIDTH))
-    p2_center_cords = (p2_cords[0]+SQUARESIZE/2, p2_cords[1]+SQUARESIZE/2)
+    #Get P2 coords
+    p2_coords = (p2_location[0]*(SQUARESIZE+FENCEWIDTH), p2_location[1]*(SQUARESIZE+FENCEWIDTH))
+    p2_center_coords = (p2_coords[0]+SQUARESIZE/2, p2_coords[1]+SQUARESIZE/2)
 
     #Draw P1 and P2
-    pygame.draw.circle(win, RED, p1_center_cords, SQUARESIZE/4)
-    pygame.draw.circle(win, BLUE, p2_center_cords, SQUARESIZE/4)
+    pygame.draw.circle(win, RED, p1_center_coords, SQUARESIZE/4)
+    pygame.draw.circle(win, BLUE, p2_center_coords, SQUARESIZE/4)
+
 
 def move_pawn(pos, game):
     """
@@ -104,6 +110,7 @@ def move_pawn(pos, game):
     col = int(pos[0]//(SQUARESIZE+FENCEWIDTH))
     #Make move
     game.move_pawn(game.get_player_turn(), (col,row))
+
 
 def place_horizontal_fence(pos,game):
     """
@@ -126,6 +133,7 @@ def place_horizontal_fence(pos,game):
     #Place horizontal fence
     game.place_fence(game.get_player_turn(), 'h', (col,row))
 
+
 def place_vertical_fence(pos,game):
     """
     Places a vertical fence. Takes as input a tuple of the x,y coordinates from the mouse input, and the current
@@ -147,6 +155,7 @@ def place_vertical_fence(pos,game):
     #Place vertical fence
     game.place_fence(game.get_player_turn(), 'v', (col,row))
 
+
 def player_one_won(win):
     """
     Display a message that player one has won the game. Takes the display window as an input. 
@@ -157,6 +166,7 @@ def player_one_won(win):
     textRect = text.get_rect()
     textRect.center = (BOARDSIZE//2, BOARDSIZE//2)
     win.blit(text, textRect)
+
 
 def player_two_won(win):
     """
@@ -170,8 +180,75 @@ def player_two_won(win):
     win.blit(text, textRect)
 
 
-def main():
+def highlight_moves(win, game):
+    """
+    Highlights available moves for pawn movement. Takes the display surface and game state object as inputs.  
+    """
+    player_turn = game.get_player_turn()
+    moves_available = game.possible_moves(game.get_pawn(player_turn))
+    if None in moves_available:
+        moves_available.remove(None)
+    for move in moves_available:
+        move_coords = (move[0]*(SQUARESIZE+FENCEWIDTH), move[1]*(SQUARESIZE+FENCEWIDTH))
+        move_center_coords = (move_coords[0]+SQUARESIZE/2, move_coords[1]+SQUARESIZE/2)
+        pygame.draw.circle(win, LIGHTGREEN, move_center_coords, SQUARESIZE/4)
+
+
+def highlight_available_h_fences(win, game):
+    """
+    Highlights available horizontal fences. Takes the display surface and game state object as inputs. 
+    """
+    #Check if player has remaining fences
+    player_turn = game.get_player_turn()
+    if game.get_pawn(player_turn).get_remaining_fences() == 0:
+        return
+
+    board = game.get_board()
     
+    #Set highlight color
+    if player_turn == 1:
+        color = LIGHTERRED
+    else:
+        color = LIGHTERBLUE
+   
+    for row in board:
+        for col in row:
+            #Highlight fence if no fence placed
+            if not col['h']:
+                coords = col['coord']
+                h_fence_coords = (coords[0]*(SQUARESIZE+FENCEWIDTH), coords[1]*SQUARESIZE+FENCEWIDTH*(coords[1]-1))
+                h_fence = pygame.Rect(h_fence_coords, (SQUARESIZE,FENCEWIDTH))
+                pygame.draw.rect(win, color, h_fence)
+            
+
+def highlight_available_v_fences(win, game):
+    """
+    Highlights available vertical fences. Takes the display surface and game state object as inputs. 
+    """
+    #Check if player has remaining fences
+    player_turn = game.get_player_turn()
+    if game.get_pawn(player_turn).get_remaining_fences() == 0:
+        return
+
+    board = game.get_board()
+
+    #Set highlight color
+    if player_turn == 1:
+        color = LIGHTERRED
+    else:
+        color = LIGHTERBLUE
+    
+    for row in board:
+        for col in row:
+            #Highlight fence if no fence placed. 
+            if not col['v']:
+                coords = col['coord']
+                v_fence_coords = (coords[0]*SQUARESIZE+FENCEWIDTH*(coords[0]-1), coords[1]*(SQUARESIZE+FENCEWIDTH))
+                v_fence = pygame.Rect(v_fence_coords, (FENCEWIDTH,SQUARESIZE))
+                pygame.draw.rect(win, color, v_fence)
+
+
+def main():
     #Initialize game
     game = QuoridorGame()
     run = True
@@ -194,6 +271,12 @@ def main():
             #Draw board and player pawns
             draw_board(WIN, board_list)
             draw_players(WIN, game.get_p1_location(), game.get_p2_location())
+            if move_type == 'p':
+                highlight_moves(WIN, game)
+            if move_type == 'h':
+                highlight_available_h_fences(WIN, game)
+            if move_type == 'v':
+                highlight_available_v_fences(WIN, game)
            
            #Get user move type 
             if event.type == pygame.KEYDOWN:
