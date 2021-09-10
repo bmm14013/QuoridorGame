@@ -1,9 +1,10 @@
 #Author: Brendan MacIntyre
-#Date:
-#Description: 
+#Date: 9/10/2021
+#Description: This program uses the pygame module to generate a GUI for a user to player a 
+#               Quoridor board game. This program uses QuoridorEngine.py to handle the game mechanics. 
 
 from QuoridorEngine import *
-import pygame, sys
+import pygame
 
 #Width and height of window
 BOARDSIZE = 500
@@ -12,12 +13,14 @@ FENCEWIDTH = BOARDSIZE/98
 
 #Colors
 WHITE = (255,255,255)
+BLACK = (0,0,0)
 RED = (205,78,56)
 LIGHTRED = (255,127,127)
 BLUE = (50,147,198)
 LIGHTBLUE = (183,225,240)
 GRAY = (241,241,241)
 
+#Window refresh rate
 FPS = 60
 
 #Initialize game and window
@@ -79,7 +82,6 @@ def draw_players(win, p1_location, p2_location):
     Draws players on board. Takes an input the surface to draw on and the board list representation from
     QuoridorEngine. SQUARESIZE, FENCEWIDTH, RED, BLUE are all global constants. 
     """
-
     #Get P1 cords
     p1_cords = (p1_location[0]*(SQUARESIZE+FENCEWIDTH), p1_location[1]*(SQUARESIZE+FENCEWIDTH))
     p1_center_cords = (p1_cords[0]+SQUARESIZE/2, p1_cords[1]+SQUARESIZE/2)
@@ -95,8 +97,8 @@ def draw_players(win, p1_location, p2_location):
 def move_pawn(pos, game):
     """
     Moves pawn. Takes as input a tuple of the x,y coordinates from the mouse input, and the current game state object. 
+    SQUARESIZE and FENCEWIDTH are global constants.
     """
-
     #Convert coordinates to row and column
     row = int(pos[1]//(SQUARESIZE+FENCEWIDTH))
     col = int(pos[0]//(SQUARESIZE+FENCEWIDTH))
@@ -105,6 +107,9 @@ def move_pawn(pos, game):
 
 def place_horizontal_fence(pos,game):
     """
+    Places a horizontal fence. Takes as input a tuple of the x,y coordinates from the mouse input, and the current
+    game state object. The y input must be between two squares. SQUARESIZE and FENCEWIDTH are 
+    global constants.
     """
     #Convert y coordinate to column
     col = int(pos[0]//(SQUARESIZE+FENCEWIDTH))
@@ -123,6 +128,9 @@ def place_horizontal_fence(pos,game):
 
 def place_vertical_fence(pos,game):
     """
+    Places a vertical fence. Takes as input a tuple of the x,y coordinates from the mouse input, and the current
+    game state object. The x input must be between two squares. SQUARESIZE and FENCEWIDTH are 
+    global constants.
     """
     #Convert x coordinate to row
     row = int(pos[1]//(SQUARESIZE+FENCEWIDTH))
@@ -139,37 +147,64 @@ def place_vertical_fence(pos,game):
     #Place vertical fence
     game.place_fence(game.get_player_turn(), 'v', (col,row))
 
+def player_one_won(win):
+    """
+    Display a message that player one has won the game. Takes the display window as an input. 
+    """
+    pygame.font.init()
+    font = pygame.font.Font(None, 32)
+    text = font.render('Red wins! Press space to play again.', True, BLACK, WHITE)
+    textRect = text.get_rect()
+    textRect.center = (BOARDSIZE//2, BOARDSIZE//2)
+    win.blit(text, textRect)
+
+def player_two_won(win):
+    """
+    Display a message that player two has won the game. Takes the display window as an input. 
+    """
+    pygame.font.init()
+    font = pygame.font.Font(None, 32)
+    text = font.render('Blue wins! Press space to play again.', True, BLACK, WHITE)
+    textRect = text.get_rect()
+    textRect.center = (BOARDSIZE//2, BOARDSIZE//2)
+    win.blit(text, textRect)
+
 
 def main():
+    
+    #Initialize game
     game = QuoridorGame()
     run = True
     clock = pygame.time.Clock()
     move_type = None
 
+    #Run loop
     while run:
         clock.tick(FPS)
 
         for event in pygame.event.get():
+            #Quit if user exits window
             if event.type == pygame.QUIT:
                 run = False
 
+            #Get board list representation and player turn
             board_list = game.get_board()
             player_turn = game.get_player_turn()
-        
+
+            #Draw board and player pawns
             draw_board(WIN, board_list)
             draw_players(WIN, game.get_p1_location(), game.get_p2_location())
            
+           #Get user move type 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     move_type = 'p'
-                    #display moves
                 if event.key == pygame.K_h:
                     move_type = 'h'
-                    #display available fences
                 if event.key == pygame.K_v:
                     move_type = 'v'
-                    #display verticle fences
             
+            #Make move based on mouse input and move type
             if event.type == pygame.MOUSEBUTTONDOWN and move_type == 'p':
                 pos = pygame.mouse.get_pos()
                 move_pawn(pos, game)
@@ -180,13 +215,23 @@ def main():
                 pos = pygame.mouse.get_pos()
                 place_vertical_fence(pos, game)
             
+            #Reset move type after player makes a valid move
             if player_turn != game.get_player_turn():
                 move_type = None
             
-            pygame.display.update()
+            #Display message if either user has won the game. 
+            if game.is_winner(1):
+                player_one_won(WIN)
+            if game.is_winner(2):
+                player_two_won(WIN)
 
-            
-               
+            #Reset game if space bar is pressed. 
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    game = QuoridorGame()
+
+            #Update display window
+            pygame.display.update()
 
     pygame.quit()
 
