@@ -105,6 +105,17 @@ class QuoridorGame:
         """
         return self._board
 
+    def get_pawn(self, player):
+        """
+        Returns the pawn object of a given player. Takes as an input the integer
+        of the player of interest. 
+        """
+        if player == 1:
+            return self._p1
+        
+        if player == 2:
+            return self._p2
+
     def get_p1_location(self):
         """
         Returns coordinates of player 1 location
