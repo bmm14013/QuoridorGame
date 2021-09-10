@@ -9,14 +9,14 @@ class Pawn:
     This class represents a pawn object to be used in a Quoridor game.
     """
 
-    def __init__(self,player,starting_cords):
+    def __init__(self,player,starting_coords):
         """
         Initializes pawn object. Takes as parameters an integer representing the player the pawn belongs to,
         and a tuple representing the starting coordinates of the pawn. Used by the QuoridorGame class
         to generate pawn objects for game.
         """
         self._player = player
-        self._location = starting_cords
+        self._location = starting_coords
         self._fences = 10
     
     def get_player(self):
@@ -80,16 +80,16 @@ class QuoridorGame:
         #Create board
         self._board = []
         for row in range(10):
-            self._board.append([{'cord': (column,row), 'h': False, 'v': False, 'pawn': False} for column in range(10)])
+            self._board.append([{'coord': (column,row), 'h': False, 'v': False, 'pawn': False} for column in range(10)])
         
         #Populate borders with fences
         for row in self._board:
             for column in row:
                 #Left and right edges
-                if (column['cord'][0] == 0 or column['cord'][0] == 9) and column['cord'][1] != 9:
+                if (column['coord'][0] == 0 or column['coord'][0] == 9) and column['coord'][1] != 9:
                     column['v'] = True
                 #Top and bottom edges
-                if (column['cord'][1] == 0 or column['cord'][1] == 9) and column['cord'][0] != 9:
+                if (column['coord'][1] == 0 or column['coord'][1] == 9) and column['coord'][0] != 9:
                     column['h'] = True
 
         #Place players on board
@@ -162,9 +162,9 @@ class QuoridorGame:
                     vert_edges += "|"
                 
                 #Place player on board
-                if column['cord'] == self._p1.get_location():
+                if column['coord'] == self._p1.get_location():
                     vert_edges += 'P1'
-                elif column['cord'] == self._p2.get_location():
+                elif column['coord'] == self._p2.get_location():
                     vert_edges += 'P2'
                 else:
                     vert_edges += "  "
@@ -190,11 +190,11 @@ class QuoridorGame:
         left_cell = row[location[0]-1]
         #Left cell is unobstructed
         if not left_cell['pawn']:
-            return {left_cell['cord']}
+            return {left_cell['coord']}
         
         #Left cell is obstructed by pawn and can jump
         if left_cell['pawn'] and not left_cell['v']:
-            return {row[location[0]-2]['cord']}
+            return {row[location[0]-2]['coord']}
 
         #Left cell is blocked by pawn and fence. Calculate diagonal moves
         if left_cell['pawn'] and left_cell['v']:
@@ -225,11 +225,11 @@ class QuoridorGame:
         
         #Right cell is unobstructed
         if not right_cell['pawn']:
-            return {right_cell['cord']}
+            return {right_cell['coord']}
         
         #Right cell is obstructed by pawn and can jump
         if right_cell['pawn'] and not row[location[0]+2]['v']:
-            return {row[location[0]+2]['cord']}
+            return {row[location[0]+2]['coord']}
         
         #Right cell blocked by a pawn and fence. Calculate diagonal moves
         if right_cell['pawn'] and row[location[0]+2]['v']:
@@ -330,7 +330,7 @@ class QuoridorGame:
         #No player has won
         return False
     
-    def move_pawn(self,player,cords):
+    def move_pawn(self,player,coords):
         """
         This method takes two parameters, an integer that represents which player is making the move and 
         a tuple with the coordinates of where the pawn is going to be moved to. If the move is forbidden
@@ -345,13 +345,13 @@ class QuoridorGame:
         if player == 1 and self.get_player_turn() == player:
             moves_available = self.possible_moves(self._p1)
             #Check if move is in possible moves
-            if cords in moves_available:
+            if coords in moves_available:
                 #Clear current location on board
                 location = self._p1.get_location()
                 self._board[location[1]][location[0]]['pawn'] = False
                 #Make move and set new location on board
-                self._p1.move_pawn(cords)
-                self._board[cords[1]][cords[0]]['pawn'] = True
+                self._p1.move_pawn(coords)
+                self._board[coords[1]][coords[0]]['pawn'] = True
                 
                 #Update player turn
                 self.set_player_turn(2)
@@ -361,13 +361,13 @@ class QuoridorGame:
         if player == 2 and self.get_player_turn() == player:
             moves_available = self.possible_moves(self._p2)
             #Check if move is in possible moves
-            if cords in moves_available:
+            if coords in moves_available:
                 #Clear current location on board
                 location = self._p2.get_location()
                 self._board[location[1]][location[0]]['pawn'] = False
                 #Make move and set new location on board
-                self._p2.move_pawn(cords)
-                self._board[cords[1]][cords[0]]['pawn'] = True
+                self._p2.move_pawn(coords)
+                self._board[coords[1]][coords[0]]['pawn'] = True
                 
                 #Update player turn
                 self.set_player_turn(1)
@@ -376,7 +376,7 @@ class QuoridorGame:
         #Move is invalid
         return False
         
-    def place_fence(self,player,fence_type,cords):
+    def place_fence(self,player,fence_type,coords):
         """
         This method takes as parameters an integer which represents which player is making the move, a letter
         indicating whether it is verticle (v) or horizontal (h) fence, a tuple of integers that represents the position
@@ -389,17 +389,17 @@ class QuoridorGame:
         if self.is_winner(1) or self.is_winner(2):
             return False
 
-        #Check that cords are valid
-        validcords = set(range(9))
-        if cords[0] not in validcords or cords[1] not in validcords:
+        #Check that coords are valid
+        validcoords = set(range(9))
+        if coords[0] not in validcoords or coords[1] not in validcoords:
             return False
 
         #Check if player one can place fence (Is currently their turn and has remaining fences)
         if player == 1 and self.get_player_turn() == 1 and self._p1.get_remaining_fences() != 0:
             #Check that cell has no fence of desired type
-            if self._board[cords[1]][cords[0]][fence_type] is False:
+            if self._board[coords[1]][coords[0]][fence_type] is False:
                 #Place fence
-                self._board[cords[1]][cords[0]][fence_type] = 1
+                self._board[coords[1]][coords[0]][fence_type] = 1
                 #Update player turn and fences available
                 self._p1.decrement_fences()
                 self.set_player_turn(2)
@@ -408,9 +408,9 @@ class QuoridorGame:
         #Check if player two can place fence
         if player == 2 and self.get_player_turn() == 2 and self._p2.get_remaining_fences() != 0:
             #Check that cell has no fence of desired type
-            if self._board[cords[1]][cords[0]][fence_type] is False:
+            if self._board[coords[1]][coords[0]][fence_type] is False:
                 #Place fence
-                self._board[cords[1]][cords[0]][fence_type] = 2
+                self._board[coords[1]][coords[0]][fence_type] = 2
                 #Update player turn and fences available
                 self._p2.decrement_fences()
                 self.set_player_turn(1)
