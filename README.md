@@ -20,5 +20,4 @@ This is a two player implementation of the Quoridor Board game. For game rules p
 ## Screenshot
 <br>
 
-![Gameplay screenshot](QuoridorScreenshot.JPG)
-
+<img src = "QuoridorScreenshot.jpg" alt = "screenshot" style = "width: 200px;"/>
