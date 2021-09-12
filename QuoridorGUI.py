@@ -50,18 +50,17 @@ def draw_board(win, board):
             board_spotcoords = (coords[0]*(SQUARESIZE+FENCEWIDTH), coords[1]*(SQUARESIZE+FENCEWIDTH))
             
             #Rect objects
-            h_fence = pygame.Rect(h_fence_coords, (SQUARESIZE,FENCEWIDTH))
-            v_fence = pygame.Rect(v_fence_coords, (FENCEWIDTH,SQUARESIZE))
+            h_fence = pygame.Rect(h_fence_coords, ((2*SQUARESIZE+FENCEWIDTH),FENCEWIDTH))
+            v_fence = pygame.Rect(v_fence_coords, (FENCEWIDTH,2*SQUARESIZE+FENCEWIDTH))
             board_spot = pygame.Rect(board_spotcoords, (SQUARESIZE,SQUARESIZE))
             
             #Draw horizontal fence           
-            if coords[1] != 0 and coords[1] != 9 and coords[0] != 9:
+            if coords[1] != 0 and coords[1] != 9 and coords[0] != 8:
                 if col['h'] == 1:
                     pygame.draw.rect(win, RED, h_fence)
                 elif col['h'] == 2:
                     pygame.draw.rect(win, BLUE, h_fence)
-                else:
-                    pygame.draw.rect(win, WHITE, h_fence)
+
             
             #Draw vertical fence
             if coords[0] != 0 and coords[0] != 9 and coords[1] != 9:
@@ -69,8 +68,7 @@ def draw_board(win, board):
                     pygame.draw.rect(win, RED, v_fence)
                 elif col['v'] == 2:
                     pygame.draw.rect(win, BLUE, v_fence)
-                else:
-                    pygame.draw.rect(win, WHITE, v_fence)
+ 
             
             #Draw grid square
             if coords[1] != 9 and coords[0] != 9:
@@ -211,11 +209,11 @@ def highlight_available_h_fences(win, game):
     else:
         color = LIGHTERBLUE
    
-    for row in board:
-        for col in row:
+    for row in range(len(board)-1):
+        for col in range(len(board)-2):
             #Highlight fence if no fence placed
-            if not col['h']:
-                coords = col['coord']
+            if not board[row][col]['h'] and not board[row][col+1]['h'] and board[row][col+1]['v'] != "Fence Continued":
+                coords = board[row][col]['coord']
                 h_fence_coords = (coords[0]*(SQUARESIZE+FENCEWIDTH), coords[1]*SQUARESIZE+FENCEWIDTH*(coords[1]-1))
                 h_fence = pygame.Rect(h_fence_coords, (SQUARESIZE,FENCEWIDTH))
                 pygame.draw.rect(win, color, h_fence)
@@ -238,11 +236,11 @@ def highlight_available_v_fences(win, game):
     else:
         color = LIGHTERBLUE
     
-    for row in board:
-        for col in row:
+    for row in range(len(board)-2):
+        for col in range(len(board)-1):
             #Highlight fence if no fence placed. 
-            if not col['v']:
-                coords = col['coord']
+            if not board[row][col]['v'] and not board[row+1][col]['v'] and board[row+1][col]['h'] != "Fence Continued":
+                coords = board[row][col]['coord']
                 v_fence_coords = (coords[0]*SQUARESIZE+FENCEWIDTH*(coords[0]-1), coords[1]*(SQUARESIZE+FENCEWIDTH))
                 v_fence = pygame.Rect(v_fence_coords, (FENCEWIDTH,SQUARESIZE))
                 pygame.draw.rect(win, color, v_fence)
