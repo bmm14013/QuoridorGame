@@ -385,36 +385,32 @@ class QuoridorGame:
         If the fence can be placed, returns True and places the fence. If the game has already been won, returns False.
         """
 
-        #Check if game has already been won
-        if self.is_winner(1) or self.is_winner(2):
+        #Check if game has already been won, and player turn is correct
+        if self.is_winner(1) or self.is_winner(2) or player != self.get_player_turn():
             return False
-
-        #Check that coords are valid
-        validcoords = set(range(9))
-        if coords[0] not in validcoords or coords[1] not in validcoords:
-            return False
-
-        #Check if player one can place fence (Is currently their turn and has remaining fences)
-        if player == 1 and self.get_player_turn() == 1 and self._p1.get_remaining_fences() != 0:
-            #Check that cell has no fence of desired type
-            if self._board[coords[1]][coords[0]][fence_type] is False:
-                #Place fence
-                self._board[coords[1]][coords[0]][fence_type] = 1
-                #Update player turn and fences available
-                self._p1.decrement_fences()
-                self.set_player_turn(2)
-                return True
         
-        #Check if player two can place fence
-        if player == 2 and self.get_player_turn() == 2 and self._p2.get_remaining_fences() != 0:
-            #Check that cell has no fence of desired type
-            if self._board[coords[1]][coords[0]][fence_type] is False:
-                #Place fence
-                self._board[coords[1]][coords[0]][fence_type] = 2
-                #Update player turn and fences available
-                self._p2.decrement_fences()
-                self.set_player_turn(1)
-                return True
+        valid_h_coords = (set(range(8)), set(range(9)))
+        valid_v_coords = (set(range(9)), set(range(8)))
+
+        if fence_type == 'h' and coords[0] in valid_h_coords[0] and coords[1] in valid_h_coords[1]:
+            if not self._board[coords[1]][coords[0]]['h'] and not self._board[coords[1]][coords[0]+1]['h'] and self._board[coords[1]][coords[0]+1]['v'] != "Fence Continued":
+                self._board[coords[1]][coords[0]]['h'] = player
+                self._board[coords[1]][coords[0]+1]['h'] = "Fence Continued"
+                self.get_pawn(player).decrement_fences()
+                if player == 1:
+                    self.set_player_turn(2)
+                else:
+                    self.set_player_turn(1)
         
+        if fence_type == 'v' and coords[0] in valid_v_coords[0] and coords[1] in valid_v_coords[1] and self._board[coords[1]+1][coords[0]]['h'] != "Fence Continued":
+            if not self._board[coords[1]][coords[0]]['v'] and not self._board[coords[1]+1][coords[0]]['v']:
+                self._board[coords[1]][coords[0]]['v'] = player
+                self._board[coords[1]+1][coords[0]]['v'] = "Fence Continued"
+                self.get_pawn(player).decrement_fences()
+                if player == 1:
+                    self.set_player_turn(2)
+                else:
+                    self.set_player_turn(1)
+
         #Move is invalid
         return False
