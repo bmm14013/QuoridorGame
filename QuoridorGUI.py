@@ -61,14 +61,12 @@ def draw_board(win, board):
                 elif col['h'] == 2:
                     pygame.draw.rect(win, BLUE, h_fence)
 
-            
             #Draw vertical fence
             if coords[0] != 0 and coords[0] != 9 and coords[1] != 9:
                 if col['v'] == 1:
                     pygame.draw.rect(win, RED, v_fence)
                 elif col['v'] == 2:
                     pygame.draw.rect(win, BLUE, v_fence)
- 
             
             #Draw grid square
             if coords[1] != 9 and coords[0] != 9:
@@ -160,7 +158,7 @@ def player_one_won(win):
     """
     pygame.font.init()
     font = pygame.font.Font(None, 32)
-    text = font.render('Red wins! Press space to play again.', True, BLACK, WHITE)
+    text = font.render('Red wins! Press backspace to play again.', True, BLACK, WHITE)
     textRect = text.get_rect()
     textRect.center = (BOARDSIZE//2, BOARDSIZE//2)
     win.blit(text, textRect)
@@ -172,7 +170,7 @@ def player_two_won(win):
     """
     pygame.font.init()
     font = pygame.font.Font(None, 32)
-    text = font.render('Blue wins! Press space to play again.', True, BLACK, WHITE)
+    text = font.render('Blue wins! Press backspace to play again.', True, BLACK, WHITE)
     textRect = text.get_rect()
     textRect.center = (BOARDSIZE//2, BOARDSIZE//2)
     win.blit(text, textRect)
@@ -182,10 +180,13 @@ def highlight_moves(win, game):
     """
     Highlights available moves for pawn movement. Takes the display surface and game state object as inputs.  
     """
+    #Get available moves
     player_turn = game.get_player_turn()
     moves_available = game.possible_moves(game.get_pawn(player_turn))
     if None in moves_available:
         moves_available.remove(None)
+    
+    #Highlight moves
     for move in moves_available:
         move_coords = (move[0]*(SQUARESIZE+FENCEWIDTH), move[1]*(SQUARESIZE+FENCEWIDTH))
         move_center_coords = (move_coords[0]+SQUARESIZE/2, move_coords[1]+SQUARESIZE/2)
@@ -211,8 +212,8 @@ def highlight_available_h_fences(win, game):
    
     for row in range(len(board)-1):
         for col in range(len(board)-2):
-            #Highlight fence if no fence placed
-            if not board[row][col]['h'] and not board[row][col+1]['h'] and board[row][col+1]['v'] != "Fence Continued":
+            #Highlight fence if no fence placed and does not intersect a vertical fence
+            if not board[row][col]['h'] and not board[row][col+1]['h'] and board[row][col+1]['v'] != "Fence Continued" and game.fair_play_check('h',(col,row)):
                 coords = board[row][col]['coord']
                 h_fence_coords = (coords[0]*(SQUARESIZE+FENCEWIDTH), coords[1]*SQUARESIZE+FENCEWIDTH*(coords[1]-1))
                 h_fence = pygame.Rect(h_fence_coords, (SQUARESIZE,FENCEWIDTH))
@@ -238,8 +239,8 @@ def highlight_available_v_fences(win, game):
     
     for row in range(len(board)-2):
         for col in range(len(board)-1):
-            #Highlight fence if no fence placed. 
-            if not board[row][col]['v'] and not board[row+1][col]['v'] and board[row+1][col]['h'] != "Fence Continued":
+            #Highlight fence if no fence placed and does not interesect a horizontal fence. 
+            if not board[row][col]['v'] and not board[row+1][col]['v'] and board[row+1][col]['h'] != "Fence Continued" and game.fair_play_check('v',(col,row)):
                 coords = board[row][col]['coord']
                 v_fence_coords = (coords[0]*SQUARESIZE+FENCEWIDTH*(coords[0]-1), coords[1]*(SQUARESIZE+FENCEWIDTH))
                 v_fence = pygame.Rect(v_fence_coords, (FENCEWIDTH,SQUARESIZE))
@@ -306,9 +307,9 @@ def main():
             if game.is_winner(2):
                 player_two_won(WIN)
 
-            #Reset game if space bar is pressed. 
+            #Reset game if backspace is pressed. 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_BACKSPACE:
                     game = QuoridorGame()
 
             #Update display window

@@ -3,6 +3,9 @@
 #Description: This program contains an implementation of the Quoridor board game. It uses a class called 
 #             QuoridorGame that handles the majority of the board and game rules. 
 
+import copy
+from pathfinding.core.grid import Grid
+from pathfinding.finder.a_star import AStarFinder
 
 class Pawn:
     """
@@ -375,7 +378,74 @@ class QuoridorGame:
                 
         #Move is invalid
         return False
+    
+    def fair_play_check(self,fence_type,coords):
+        """
+        This method checks if placing a fence will break the fair play rule. As inputs the fence_type and the coordinates of
+        interest. Returns True if there remains a path and False if it breaks the fair play rule. 
+        """
+        #Copy board and place fence
+        board_copy = copy.deepcopy(self.get_board())
+        if fence_type == 'h':
+            board_copy[coords[1]][coords[0]]['h'] = True
+            board_copy[coords[1]][coords[0]+1]['h'] = True
+        if fence_type == 'v':
+            board_copy[coords[1]][coords[0]]['v'] = True
+            board_copy[coords[1]+1][coords[0]]['v'] = True
         
+        #Create matrix grid representing board copy
+        matrix = [[1 for _ in range(17)] for _ in range(17)]
+        for row in range(len(board_copy)-1):
+            for col in range(len(board_copy)-1):
+                #Set vertical fences
+                if col != 0 and board_copy[row][col]['v'] != False:
+                    matrix[2*row][2*col-1] = 0
+                #Set horizontal fences
+                if row != 0 and board_copy[row][col]['h'] != False:
+                    matrix[2*row-1][2*col] = 0
+                #Restrict diagonal movement
+                if row != 8 and col != 8:
+                    matrix[2*row+1][2*col+1] = 0    
+
+
+        #Initialize A* algorithm
+        grid = Grid(matrix = matrix)
+        finder = AStarFinder()
+
+        #Initialize A* algorithm for player 1 path
+        p1_location = self.get_p1_location()
+        p1_path_found = False
+        endpoint_counter = 0
+        start = grid.node(2*p1_location[0],2*p1_location[1])
+        
+        #Find path to goal for p1. Starts at left most square and checks for path to all goal squares if neccessary
+        while not p1_path_found and endpoint_counter < len(board_copy)-1:
+            end = grid.node(2*endpoint_counter,16)
+            path, runs = finder.find_path(start,end,grid)
+            if len(path) > 0:
+                p1_path_found = True 
+            grid.cleanup()
+            endpoint_counter += 1
+
+        #Initialize A* algorithm for player 2 path
+        p2_location = self.get_p2_location()
+        p2_path_found = False
+        endpoint_counter = 0
+        start = grid.node(2*p2_location[0],2*p2_location[1])
+
+        #Find path to goal for p2. Starts at left most square and checks for path to all goal squares if neccessary
+        while not p2_path_found and endpoint_counter < len(board_copy)-1:
+            end = grid.node(2*endpoint_counter,0)
+            path, runs = finder.find_path(start,end,grid)
+            if len(path) > 0:
+                p2_path_found = True 
+            grid.cleanup()
+            endpoint_counter += 1
+        
+        #Return True if path found for both players. 
+        return p1_path_found and p2_path_found
+        
+
     def place_fence(self,player,fence_type,coords):
         """
         This method takes as parameters an integer which represents which player is making the move, a letter
@@ -394,6 +464,9 @@ class QuoridorGame:
 
         if fence_type == 'h' and coords[0] in valid_h_coords[0] and coords[1] in valid_h_coords[1]:
             if not self._board[coords[1]][coords[0]]['h'] and not self._board[coords[1]][coords[0]+1]['h'] and self._board[coords[1]][coords[0]+1]['v'] != "Fence Continued":
+                #Check that placement satisfies fair play rule
+                if not self.fair_play_check('h',coords):
+                    return False
                 self._board[coords[1]][coords[0]]['h'] = player
                 self._board[coords[1]][coords[0]+1]['h'] = "Fence Continued"
                 self.get_pawn(player).decrement_fences()
@@ -404,6 +477,8 @@ class QuoridorGame:
         
         if fence_type == 'v' and coords[0] in valid_v_coords[0] and coords[1] in valid_v_coords[1] and self._board[coords[1]+1][coords[0]]['h'] != "Fence Continued":
             if not self._board[coords[1]][coords[0]]['v'] and not self._board[coords[1]+1][coords[0]]['v']:
+                if not self.fair_play_check('v',coords):
+                    return False
                 self._board[coords[1]][coords[0]]['v'] = player
                 self._board[coords[1]+1][coords[0]]['v'] = "Fence Continued"
                 self.get_pawn(player).decrement_fences()
