@@ -14,9 +14,12 @@ class Pawn:
 
     def __init__(self,player,starting_coords):
         """
-        Initializes pawn object. Takes as parameters an integer representing the player the pawn belongs to,
-        and a tuple representing the starting coordinates of the pawn. Used by the QuoridorGame class
+        Initializes pawn object. Used by the QuoridorGame class
         to generate pawn objects for game.
+        
+        Args:
+            player: Integer representing the player the pawn belogns to.
+            starting_cords: Tuple representing the starting coordinates of the pawn.
         """
         self._player = player
         self._location = starting_coords
@@ -24,32 +27,34 @@ class Pawn:
     
     def get_player(self):
         """
-        Returns the integer representing the player number of the pawn
+        Returns the integer representing the player number of the pawn.
         """
         return self._player
 
     def get_location(self):
         """
-        Returns a tuple containing the coordinates of the pawns current location
+        Returns a tuple containing the coordinates of the pawns current location.
         """
         return self._location
     
     def move_pawn(self,new_location):
         """
-        Change the location of the pawn. Takes as a parameter a tuple containing the coordinates of the 
-        desired location. 
+        Change the location of the pawn. 
+        
+        Args:
+            new_location: Tuple containing the coordinates of the desired location.
         """
         self._location = new_location
     
     def get_remaining_fences(self):
         """
-        Returns the remaining fences available to the pawn/player 
+        Returns the remaining fences available to the pawn/player.
         """
         return self._fences
     
     def decrement_fences(self):
         """
-        Decreases amount of remaining fences by 1
+        Decreases amount of remaining fences by 1.
         """
         self._fences -= 1
 
@@ -63,17 +68,17 @@ class QuoridorGame:
     however this is not enforced. 
     Main methods available to use are as follows:
     
-    :print_board: Prints the game board
-    :move_pawn: Moves pawn to desired location. 
-    :place_fence: Places a fence at a desired location
-    :is_winner: Tells the user if a player has won the game
-    :get_player_turn: Tells the user whose turn it is
+    print_board: Prints the game board
+    move_pawn: Moves pawn to desired location. 
+    place_fence: Places a fence at a desired location
+    is_winner: Tells the user if a player has won the game
+    get_player_turn: Tells the user whose turn it is
     """
 
     def __init__(self):
         """
         Initializes the game board with fences (four board edges) and pawns (P1 and P2) placed in the correct
-        positions
+        positions.
         """
         #Create players
         self._p1 = Pawn(1, (4,0))
@@ -104,14 +109,16 @@ class QuoridorGame:
     
     def get_board(self):
         """
-        Returns the board list representation
+        Returns the board list representation.
         """
         return self._board
 
     def get_pawn(self, player):
         """
-        Returns the pawn object of a given player. Takes as an input the integer
-        of the player of interest. 
+        Returns the pawn object of a given player. 
+        
+        Args:
+            player: Integer representing the player of interest.
         """
         if player == 1:
             return self._p1
@@ -121,13 +128,13 @@ class QuoridorGame:
 
     def get_p1_location(self):
         """
-        Returns coordinates of player 1 location
+        Returns coordinates of player 1 location.
         """
         return self._p1.get_location()
 
     def get_p2_location(self):
         """
-        Returns coordinates of player 2 location
+        Returns coordinates of player 2 location.
         """
         return self._p2.get_location()
 
@@ -139,13 +146,16 @@ class QuoridorGame:
     
     def set_player_turn(self,player):
         """
-        Change player turn. Takes as a parameter the integer representing the player who's turn it will be.
+        Change player turn.
+        
+        Args:
+            player: Integer representing the player who's turn it will be.
         """
         self._player_turn = player
     
     def print_board(self):
         """
-        Prints the game board board
+        Prints the game board board.
         """
         for row in self._board:
             #Initialize row strings
@@ -178,8 +188,14 @@ class QuoridorGame:
     
     def can_move_left(self,pawn):
         """
-        Determines all left moves(if any) available to the pawn of interest. Returns a set of one or more
-        tuples containing the coordinates of possible moves. 
+        Determines all left moves(if any) available to the pawn of interest.
+        
+        Args: 
+            pawn: Pawn object of interest.
+        
+        Returns:
+            A set of one or more tuples containing the coordinates of possible moves in the left
+            direction. 
         """
         location = pawn.get_location()
         #Row containing pawn
@@ -213,8 +229,14 @@ class QuoridorGame:
 
     def can_move_right(self,pawn): 
         """
-        Determines all right moves(if any) available to the pawn of interest. Returns a set of one or more
-        tuples containing the coordinates of possible moves. Takes as a parameter the pawn object of interest.
+        Determines all right moves(if any) available to the pawn of interest.
+        
+        Args: 
+            pawn: Pawn object of interest.
+        
+        Returns:
+            A set of one or more tuples containing the coordinates of possible moves in the right
+            direction. 
         """
         location = pawn.get_location()
         #Row containing pawn
@@ -247,8 +269,14 @@ class QuoridorGame:
     
     def can_move_up(self,pawn):
         """
-        Determines all up moves(if any) available to the pawn of interest. Returns a set of one or more
-        tuples containing the coordinates of possible moves. Takes as a parameter the pawn object of interest.
+        Determines all up moves(if any) available to the pawn of interest.
+        
+        Args: 
+            pawn: Pawn object of interest.
+        
+        Returns:
+            A set of one or more tuples containing the coordinates of possible moves in the up
+            direction. 
         """
         location = pawn.get_location()
 
@@ -277,8 +305,14 @@ class QuoridorGame:
     
     def can_move_down(self,pawn):
         """
-        Determines all down moves(if any) available to the pawn of interest. Returns a set of one or more
-        tuples containing the coordinates of possible moves. Takes as a parameter the pawn object of interest.
+        Determines all down moves(if any) available to the pawn of interest.
+        
+        Args: 
+            pawn: Pawn object of interest.
+        
+        Returns:
+            A set of one or more tuples containing the coordinates of possible moves in the down
+            direction. 
         """
         location = pawn.get_location()
 
@@ -307,8 +341,13 @@ class QuoridorGame:
 
     def possible_moves(self,pawn):
         """
-        Returns a set of tuples containing coordintes of possible moves for a pawn. Takes as a parameter
-        the pawn of interest.
+        Returns a set of tuples containing the coordinates of all possible moves for a pawn.
+        
+        Args: 
+            pawn: Pawn object of interest.
+        
+        Returns:
+            A set of one or more tuples containing coordinates of all possible moves for a pawn.
         """
         right = self.can_move_right(pawn)
         left = self.can_move_left(pawn)
@@ -319,8 +358,13 @@ class QuoridorGame:
   
     def is_winner(self,player):
         """
-        This method takes as a parameter a single integer representing the player of interest and returns 
-        True if that player has won and False if that player has not won
+        This method checks if a player has won the game.
+
+        Args:
+            player: Integer representing the player of interest.
+        
+        Returns:
+            True if the player has won and False if the player has not won. 
         """
         #Check player 1 win
         if player == 1 and self._p1.get_location()[1] == 8:
@@ -335,10 +379,17 @@ class QuoridorGame:
     
     def move_pawn(self,player,coords):
         """
-        This method takes two parameters, an integer that represents which player is making the move and 
-        a tuple with the coordinates of where the pawn is going to be moved to. If the move is forbidden
-        by the rule or blocked by the fence, returns False. If the move was successful or causes a win, returns 
-        True and make the move. If the game has already been won, returns False
+        This method is used to move a pawn. The method checks if the move is valid and then makes the 
+        move if so. Pawn location is updated both in the Pawn object and on the board. 
+
+        Args:
+            player: Integer represting the player making the move.
+            coords: Tuple containing the coordinates the pawn will move to.
+        
+        Returns:
+            True if the move was successful or causes a win, and False if the move is invalid or 
+            the game has already been won. 
+       
         """
         #Check if either player has won
         if self.is_winner(1) or self.is_winner(2):
@@ -381,8 +432,15 @@ class QuoridorGame:
     
     def fair_play_check(self,fence_type,coords):
         """
-        This method checks if placing a fence will break the fair play rule. As inputs the fence_type and the coordinates of
-        interest. Returns True if there remains a path and False if it breaks the fair play rule. 
+        This method checks if placing a fence will break the fair play rule. 
+        
+        Args:
+            fence_type: String character containing the type of the fence (either 'h' or 'v').
+            coords: Tuple containing the coordinates where a fence is to be placed.
+        
+        Returns:
+            True if there remains a path for both players after the fence is placed and False if 
+            it breaks the fair play rule.
         """
         #Copy board and place fence
         board_copy = copy.deepcopy(self.get_board())
@@ -448,11 +506,17 @@ class QuoridorGame:
 
     def place_fence(self,player,fence_type,coords):
         """
-        This method takes as parameters an integer which represents which player is making the move, a letter
-        indicating whether it is verticle (v) or horizontal (h) fence, a tuple of integers that represents the position
-        on which the fence is to be placed (will be placed on top left corner of cell). If the player has no
-        fences left, or if the fence is out of bounds, or if there is already a fence there, returns False. 
-        If the fence can be placed, returns True and places the fence. If the game has already been won, returns False.
+        Places a fence for a player. This method checks that the fence placement is valid and if 
+        so places the fence specified. 
+        
+        Args:
+            player: Integer representing the player making the move.
+            fence_type: String character representing the type of fence to be placed (either 'h' or v').
+            coords: Tuple containing the coordinates where the fence will be placed. 
+        
+        Returns:
+            True if the fence placement is valid and move is made, False if the move is invalid or the game
+            has already been won. 
         """
 
         #Check if game has already been won, and player turn is correct
@@ -462,6 +526,7 @@ class QuoridorGame:
         valid_h_coords = (set(range(8)), set(range(9)))
         valid_v_coords = (set(range(9)), set(range(8)))
 
+        #Placing horizontal fence
         if fence_type == 'h' and coords[0] in valid_h_coords[0] and coords[1] in valid_h_coords[1]:
             if not self._board[coords[1]][coords[0]]['h'] and not self._board[coords[1]][coords[0]+1]['h'] and self._board[coords[1]][coords[0]+1]['v'] != "Fence Continued":
                 #Check that placement satisfies fair play rule
@@ -469,18 +534,22 @@ class QuoridorGame:
                     return False
                 self._board[coords[1]][coords[0]]['h'] = player
                 self._board[coords[1]][coords[0]+1]['h'] = "Fence Continued"
+                #Decrement fences and change player turn
                 self.get_pawn(player).decrement_fences()
                 if player == 1:
                     self.set_player_turn(2)
                 else:
                     self.set_player_turn(1)
         
+        #Placing vertical fence
         if fence_type == 'v' and coords[0] in valid_v_coords[0] and coords[1] in valid_v_coords[1] and self._board[coords[1]+1][coords[0]]['h'] != "Fence Continued":
             if not self._board[coords[1]][coords[0]]['v'] and not self._board[coords[1]+1][coords[0]]['v']:
+                #Check that placement satisfies fair play rule
                 if not self.fair_play_check('v',coords):
                     return False
                 self._board[coords[1]][coords[0]]['v'] = player
                 self._board[coords[1]+1][coords[0]]['v'] = "Fence Continued"
+                #Decrement fences and change player turn
                 self.get_pawn(player).decrement_fences()
                 if player == 1:
                     self.set_player_turn(2)

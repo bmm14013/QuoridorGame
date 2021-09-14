@@ -33,8 +33,12 @@ pygame.display.set_caption("Quoridor")
 
 def draw_board(win, board):
     """
-    Draws the game board with fences. Takes as inputs the surface to draw the rectangles on and the board list 
-    representation from the QuoridorEngine. SQUARESIZE and FENCEWIDTH, WHITE and GRAY are globally defined constants. 
+    Draws the game board with fences. SQUARESIZE and FENCEWIDTH, WHITE, GRAY, RED, BLUE, LIGHTRED
+    and LIGHTBLUE are globally defined constants. 
+    
+    Args:
+        win: Surface to draw rectangles/board on.
+        board: Board list representation from QuoridorGame object. 
     """
     win.fill(WHITE)
     
@@ -80,8 +84,12 @@ def draw_board(win, board):
 
 def draw_players(win, p1_location, p2_location):
     """
-    Draws players on board. Takes an input the surface to draw on and the board list representation from
-    QuoridorEngine. SQUARESIZE, FENCEWIDTH, RED, BLUE are all global constants. 
+    Draws players' pawns on board. SQUARESIZE, FENCEWIDTH, RED, BLUE are all global constants. 
+    
+    Args:
+        win: Surface to draw players on.
+        p1_location: Tuple representing the current location of player 1's pawn.
+        p2_location: Tuple representing the current location of player 2's pawn.
     """
     #Get P1 coords
     p1_coords = (p1_location[0]*(SQUARESIZE+FENCEWIDTH), p1_location[1]*(SQUARESIZE+FENCEWIDTH))
@@ -98,8 +106,11 @@ def draw_players(win, p1_location, p2_location):
 
 def move_pawn(pos, game):
     """
-    Moves pawn. Takes as input a tuple of the x,y coordinates from the mouse input, and the current game state object. 
-    SQUARESIZE and FENCEWIDTH are global constants.
+    Moves pawn based on user mouse input. SQUARESIZE and FENCEWIDTH are global constants.
+    
+    Args:
+        pos: x,y coordinates on window surface of where the pawn is to move to (From mouse input).
+        game: QuoridorGame object representing current game state.
     """
     #Convert coordinates to row and column
     row = int(pos[1]//(SQUARESIZE+FENCEWIDTH))
@@ -110,9 +121,12 @@ def move_pawn(pos, game):
 
 def place_horizontal_fence(pos,game):
     """
-    Places a horizontal fence. Takes as input a tuple of the x,y coordinates from the mouse input, and the current
-    game state object. The y input must be between two squares. SQUARESIZE and FENCEWIDTH are 
+    Places a horizontal fence based on user mouse input. The y input must be between two squares. SQUARESIZE and FENCEWIDTH are 
     global constants.
+    
+    Args:
+        pos: x,y coordinates on window surface of where the fence is to be placed (From mouse input).
+        game: QuoridorGame object representing current game state.
     """
     #Convert y coordinate to column
     col = int(pos[0]//(SQUARESIZE+FENCEWIDTH))
@@ -132,9 +146,12 @@ def place_horizontal_fence(pos,game):
 
 def place_vertical_fence(pos,game):
     """
-    Places a vertical fence. Takes as input a tuple of the x,y coordinates from the mouse input, and the current
-    game state object. The x input must be between two squares. SQUARESIZE and FENCEWIDTH are 
+    Places a vertical fence based on user mouse input. The x input must be between two squares. SQUARESIZE and FENCEWIDTH are 
     global constants.
+    
+    Args:
+        pos: x,y coordinates on window surface of where the fence is to be placed (From mouse input).
+        game: QuoridorGame object representing current game state.
     """
     #Convert x coordinate to row
     row = int(pos[1]//(SQUARESIZE+FENCEWIDTH))
@@ -154,7 +171,10 @@ def place_vertical_fence(pos,game):
 
 def player_one_won(win):
     """
-    Display a message that player one has won the game. Takes the display window as an input. 
+    Display a message that player one has won the game. 
+    
+    Args:
+        win: Surface to display message on.
     """
     pygame.font.init()
     font = pygame.font.Font(None, 32)
@@ -166,7 +186,10 @@ def player_one_won(win):
 
 def player_two_won(win):
     """
-    Display a message that player two has won the game. Takes the display window as an input. 
+    Display a message that player two has won the game. 
+    
+    Args:
+        win: Surface to display message on.
     """
     pygame.font.init()
     font = pygame.font.Font(None, 32)
@@ -178,7 +201,11 @@ def player_two_won(win):
 
 def highlight_moves(win, game):
     """
-    Highlights available moves for pawn movement. Takes the display surface and game state object as inputs.  
+    Highlights available moves for pawn movement.
+
+    Args:
+        win: Surface to draw on.
+        game: QuoridorGame object that represents current game state. 
     """
     #Get available moves
     player_turn = game.get_player_turn()
@@ -195,7 +222,11 @@ def highlight_moves(win, game):
 
 def highlight_available_h_fences(win, game):
     """
-    Highlights available horizontal fences. Takes the display surface and game state object as inputs. 
+    Highlights available horizontal fences.
+
+    Args:
+        win: Surface to draw on.
+        game: QuoridorGame object that represents current game state. 
     """
     #Check if player has remaining fences
     player_turn = game.get_player_turn()
@@ -222,7 +253,11 @@ def highlight_available_h_fences(win, game):
 
 def highlight_available_v_fences(win, game):
     """
-    Highlights available vertical fences. Takes the display surface and game state object as inputs. 
+    Highlights available vertical fences.
+   
+    Args:
+        win: Surface to draw on.
+        game: QuoridorGame object that represents current game state. 
     """
     #Check if player has remaining fences
     player_turn = game.get_player_turn()
@@ -248,6 +283,9 @@ def highlight_available_v_fences(win, game):
 
 
 def main():
+    """
+    Main function, generates GUI. 
+    """
     #Initialize game
     game = QuoridorGame()
     run = True
