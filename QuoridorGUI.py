@@ -177,7 +177,7 @@ def player_one_won(win):
         win: Surface to display message on.
     """
     pygame.font.init()
-    font = pygame.font.Font(None, 32)
+    font = pygame.font.Font("Roboto-Regular.ttf", 24)
     text = font.render('Red wins! Press backspace to play again.', True, BLACK, WHITE)
     textRect = text.get_rect()
     textRect.center = (BOARDSIZE//2, BOARDSIZE//2)
@@ -192,7 +192,7 @@ def player_two_won(win):
         win: Surface to display message on.
     """
     pygame.font.init()
-    font = pygame.font.Font(None, 32)
+    font = pygame.font.Font("Roboto-Regular.ttf", 24)
     text = font.render('Blue wins! Press backspace to play again.', True, BLACK, WHITE)
     textRect = text.get_rect()
     textRect.center = (BOARDSIZE//2, BOARDSIZE//2)
