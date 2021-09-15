@@ -64,8 +64,7 @@ class QuoridorGame:
     """
     This class represents a Quoridor game board object. Player 1 will start the game. On a player's turn
     they will make one move. They can either move the pawn or place a fence. Uses the Pawn class to generate
-    pawn objects. There is a fair play rule that an opponent cannot block off access to the other players goal line,
-    however this is not enforced. 
+    pawn objects. S
     Main methods available to use are as follows:
     
     print_board: Prints the game board
