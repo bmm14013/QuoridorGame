@@ -1,6 +1,8 @@
 # QuoridorGame
 Implementation of the **Quoridor** board game. It uses [pygame](https://www.pygame.org/news).
 
+For .exe file, see [releases](https://github.com/bmm14013/QuoridorGame/releases/tag/v0.1)
+
 ## Screenshot
 
 <img src = "QuoridorScreenshot.JPG" alt = "screenshot" width = "300"/>
